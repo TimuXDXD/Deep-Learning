@@ -184,4 +184,4 @@ if __name__ == '__main__':
 
     d_model, g_model, gan_model = build_and_summary_models(latent_dim=100)
 
-    # train(d_model, g_model, gan_model, dataset, latent_dim=100)
+    train(d_model, g_model, gan_model, dataset, latent_dim=100)
