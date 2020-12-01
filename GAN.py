@@ -1,5 +1,6 @@
 from keras.datasets.mnist import load_data
 from keras.models import Sequential
+from keras.models import load_model
 from keras.optimizers import Adam
 from keras.layers import Dense
 from keras.layers import Reshape
@@ -168,9 +169,19 @@ def build_and_summary_models(latent_dim):
 
     return d_model, g_model, gan_model
 
+def generate_by_existed_model():
+    model = load_model('generator_model_e100.h5')
+    latent_points = generate_latent_points(100,25)
+    x = model.predict(latent_points)
+    for i in range(25):
+        pyplot.subplot(5, 5, i+1)
+        pyplot.axis('off')
+        pyplot.imshow(x[i,:,:,0], cmap='gray_r')
+    pyplot.show()
+
 if __name__ == '__main__':
     dataset = load_samples()
 
     d_model, g_model, gan_model = build_and_summary_models(latent_dim=100)
 
-    train(d_model, g_model, gan_model, dataset, latent_dim=100)
+    # train(d_model, g_model, gan_model, dataset, latent_dim=100)
