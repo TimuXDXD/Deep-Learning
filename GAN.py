@@ -138,7 +138,7 @@ def summarize_performance(epoch, g_model, d_model, dataset, latent_dim, n_sample
     _, acc_real = d_model.evaluate(x_real, y_real, verbose=0)
     x_fake, y_fake = generate_fake_samples(g_model, latent_dim, n_samples)
     _, acc_fake = d_model.evaluate(x_fake, y_fake, verbose=0)
-    print('>Accuracy real: %.0f%%, fake: %.0%%' % (acc_real*100, acc_fake*100))
+    print('>Accuracy real: %.0f%%, fake: %.0f%%' % (acc_real*100, acc_fake*100))
     save_plot(x_fake, epoch)
     filename = 'generate_model_e%03d.h5' % (epoch + 1)
     g_model.save(filename)
@@ -152,33 +152,25 @@ def save_plot(examples, epoch, n=10):
     pyplot.savefig(filename)
     pyplot.close()
 
-# model = define_discriminator()
-dataset = load_samples()
-# train_discriminator(model, dataset)
-# model.summary()
+def build_and_summary_models(latent_dim):
 
-latent_dim = 100
-# model = define_generator(latent_dim)
-# model.summary()
-# n_samples = 25
+    d_model = define_discriminator()
+    d_model.summary()
+    plot_model(d_model, to_file='discriminator_plot.png', show_shapes=True, show_layer_names=True)
 
-# X, _ = generate_fake_samples(model, latent_dim, n_samples)
-# for i in range(n_samples):
-#     pyplot.subplot(5, 5, i+1)
-#     pyplot.axis('off')
-#     pyplot.imshow(X[i,:,:,0], cmap='gray_r')
-# pyplot.show()
+    g_model = define_generator(latent_dim)
+    g_model.summary()
+    plot_model(g_model, to_file='generator_plot.png', show_shapes=True, show_layer_names=True)
 
-d_model = define_discriminator()
-d_model.summary()
-plot_model(d_model, to_file='discriminator_plot.png', show_shapes=True, show_layer_names=True)
+    gan_model = define_gan(g_model, d_model)
+    gan_model.summary()
+    plot_model(gan_model, to_file='gan_plot.png', show_shapes=True, show_layer_names=True)
 
-g_model = define_generator(latent_dim)
-g_model.summary()
-plot_model(g_model, to_file='generator_plot.png', show_shapes=True, show_layer_names=True)
+    return d_model, g_model, gan_model
 
-gan_model = define_gan(g_model, d_model)
-gan_model.summary()
-plot_model(gan_model, to_file='gan_plot.png', show_shapes=True, show_layer_names=True)
+if __name__ == '__main__':
+    dataset = load_samples()
 
-# train(d_model, g_model, gan_model, dataset, latent_dim)
+    d_model, g_model, gan_model = build_and_summary_models(latent_dim=100)
+
+    train(d_model, g_model, gan_model, dataset, latent_dim=100)
