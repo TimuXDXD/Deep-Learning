@@ -1,0 +1,74 @@
+import scipy
+import scipy.misc
+from glob import glob
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
+
+class DataLoader():
+    def __init__(self, dataset_name, img_res=(128, 128)):
+        self.dataset_name = dataset_name
+        self.img_res = img_res
+
+    def load_data(self, domain, batch_size=1, is_testing=False):
+        img_path = "%s_train" % domain if not is_testing else "%s_test" % domain
+        data = np.load('./datasets/' + img_path + '.npy')
+        # path = glob('./datasets/%s/%s/*' % (self.dataset_name, data_type))
+        #
+        # batch_images = np.random.choice(path, size=batch_size)
+        #
+        imgs = []
+        for img in range(data.shape[0]):
+            imgs.append(data[img:])
+
+
+        imgs = np.array(imgs)/127.5 - 1.
+
+        return imgs
+
+    def load_batch(self, batch_size=1, is_testing=False):
+        data_type = "train" if not is_testing else "val"
+        # path_A = glob('./datasets/%s/%sA/*' % (self.dataset_name, data_type))
+        # path_B = glob('./datasets/%s/%sB/*' % (self.dataset_name, data_type))
+
+        img_A = np.load('./datasets/X_train.npy')
+        img_B = np.load('./datasets/Y_train.npy')
+        self.n_batches = int(min(img_A.shape[0], img_B.shape[0]) / batch_size)
+        total_samples = self.n_batches * batch_size
+
+        # Sample n_batches * batch_size from each path list so that model sees all
+        # samples from both domains
+        # path_A = np.random.choice(path_A, total_samples, replace=False)
+        # path_B = np.random.choice(path_B, total_samples, replace=False)
+
+        for i in range(self.n_batches-1):
+            # batch_A = path_A[i*batch_size:(i+1)*batch_size]
+            # batch_B = path_B[i*batch_size:(i+1)*batch_size]
+            imgs_A, imgs_B = [], []
+            for x, y in zip(img_A[i*batch_size:(i+1)*batch_size], img_B[i*batch_size:(i+1)*batch_size]):
+                # img_A = self.imread(img_A)
+                # img_B = self.imread(img_B)
+                #
+                x = x.reshape(128,128,1)
+                y = y.reshape(128,128,1)
+
+                # if not is_testing and np.random.random() > 0.5:
+                #         img_A = np.fliplr(img_A)
+                #         img_B = np.fliplr(img_B)
+
+                imgs_A.append(x)
+                imgs_B.append(y)
+
+            imgs_A = np.array(imgs_A)/127.5 - 1.
+            imgs_B = np.array(imgs_B)/127.5 - 1.
+
+            yield imgs_A, imgs_B
+
+    def load_img(self, path):
+        img = self.imread(path)
+        img = np.array(Image.fromarray((img * 255).astype(np.uint8)).resize(self.img_res)).astype(np.float) / 255.
+        img = img/127.5 - 1.
+        return img[np.newaxis, :, :, :]
+
+    def imread(self, path):
+        return plt.imread(path).astype(np.float)
