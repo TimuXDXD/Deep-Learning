@@ -70,7 +70,7 @@ class CycleGAN():
     	g = Conv2DTranspose(64, (3,3), strides=(2,2), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
     	g = Activation('relu')(g)
-    	# c7s1-3
+    	# c7s1-1
     	g = Conv2D(1, (7,7), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
     	out_image = Activation('tanh')(g)
