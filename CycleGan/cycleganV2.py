@@ -59,9 +59,9 @@ class CycleGAN():
     	g = Conv2D(256, (3,3), strides=(2,2), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
     	g = Activation('relu')(g)
-    	# R256
-    	for _ in range(self.n_resnet):
-    		g = self.resnet_block(256, g)
+    	# # R256
+    	# for _ in range(self.n_resnet):
+    	# 	g = self.resnet_block(256, g)
     	# u128
     	g = Conv2DTranspose(128, (3,3), strides=(2,2), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
@@ -143,7 +143,7 @@ class CycleGAN():
         (X_train, Y_train), (X_test, Y_test) = load_npy()
         dataX = vstack((X_train,X_test))
         dataY = vstack((Y_train,Y_test))
-        dataX = dataY.reshape(len(dataX),128,128,1)
+        dataX = dataX.reshape(len(dataX),128,128,1)
         dataY = dataY.reshape(len(dataY),128,128,1)
         dataX = (dataX - 127.5) / 127.5
         dataY = (dataY - 127.5) / 127.5
