@@ -70,8 +70,8 @@ class CycleGAN():
     	g = Conv2DTranspose(64, (3,3), strides=(2,2), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
     	g = Activation('relu')(g)
-    	# c7s1-1
-    	g = Conv2D(1, (7,7), padding='same', kernel_initializer=init)(g)
+    	# c7s1-3
+    	g = Conv2D(3, (7,7), padding='same', kernel_initializer=init)(g)
     	g = InstanceNormalization(axis=-1)(g)
     	out_image = Activation('tanh')(g)
     	# define model
@@ -143,8 +143,6 @@ class CycleGAN():
         (X_train, Y_train), (X_test, Y_test) = load_npy()
         dataX = vstack((X_train,X_test))
         dataY = vstack((Y_train,Y_test))
-        dataX = dataX.reshape(len(dataX),128,128,1)
-        dataY = dataY.reshape(len(dataY),128,128,1)
         dataX = (dataX - 127.5) / 127.5
         dataY = (dataY - 127.5) / 127.5
         return [dataX, dataY]
