@@ -178,9 +178,9 @@ class CycleGAN():
     # generate samples and save as a plot and save the model
     def summarize_performance(self, step, g_model, trainX, name, n_samples=5):
     	# select a sample of input images
-    	X_in, _ = generate_real_samples(trainX, n_samples, 0)
+    	X_in, _ = self.generate_real_samples(trainX, n_samples, 0)
     	# generate translated images
-    	X_out, _ = generate_fake_samples(g_model, X_in, 0)
+    	X_out, _ = self.generate_fake_samples(g_model, X_in, 0)
     	# scale all pixels from [-1,1] to [0,1]
     	X_in = (X_in + 1) / 2.0
     	X_out = (X_out + 1) / 2.0
